@@ -1,9 +1,9 @@
 {
-	"name": "autoblocks-lsp-server",
+	"name": "autoblocks-languageserver-node",
 	"description": "Example implementation of a language server in node.",
-	"version": "1.0.0",
-	"author": "Microsoft Corporation",
-	"license": "MIT",
+	"version": "0.0.1",
+	"author": "Autoblocks",
+	"license": "AGPLv3",
 	"engines": {
 		"node": "*"
 	},

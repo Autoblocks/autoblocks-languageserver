@@ -1,12 +1,12 @@
 {
-	"name": "autoblocks-lsp",
+	"name": "autoblocks-languageserver",
 	"description": "A language server example",
 	"author": "Autoblocks",
 	"license": "AGPLv3",
 	"version": "0.0.1",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Autoblocks/autoblocks-lsp"
+		"url": "https://github.com/Autoblocks/autoblocks-languageserver"
 	},
 	"publisher": "Autoblocks",
 	"categories": [],
