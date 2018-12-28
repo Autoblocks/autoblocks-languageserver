@@ -1,0 +1,157 @@
+{
+	"information_for_contributors": [
+		"This file is hosted at https://github.com/Autoblocks/Autoblocks-TmLanguage",
+	  "Bug fixes, feature requests and pull requests are welcome."
+	],
+	"version": "https://github.com/Autoblocks/Autoblocks-TmLanguage/commit/c60fdafb0de2d7710d4b900796de2f82039d40d5",
+	"name": "Autoblocks",
+	"uuid": "fb96d833-4bae-49f8-8149-f32df5ec0669",
+	"scopeName": "source.autoblocks",
+	"fileTypes": [
+	  "AB",
+	  "IL",
+	  "FBD",
+	  "LD",
+	  "ST",
+	  "SFC"
+	],
+	"patterns": [
+	  {
+			"include": "#comments"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#constants"
+		},
+		{
+			"include": "#identifiers"
+		},
+		{
+			"include": "#punctuation"
+		},
+		{
+			"include": "#illegal"
+		}
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"begin": "\\(\\*",
+					"end": "\\*\\)",
+					"name": "comment.Autoblocks"
+				}
+			]
+		},
+	  "strings": {
+			"patterns": [
+				{
+					"match": "('.*?')",
+					"name": "string.Autoblocks"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				
+				{
+					"match": "(\\b(?i)(EXPONENT|CARDINAL|INTEGER|RETAIN|NON_RETAIN|CONSTANT|R_EDGE|F_EDGE|VAR_INPUT|VAR_OUTPUT|VAR_IN_OUT|VAR_EXTERNAL|VAR_GLOBAL|VAR_ACCESS|VAR_TEMP|VAR_CONFIG|END_CONFIGURATION|CONFIGURATION|END_RESOURCE|RESOURCE|END_VAR|VAR|END_PROGRAM|END_FUNCTION_BLOCK|END_FUNCTION|FUNCTION_BLOCK|FUNCTION|PROGRAM|END_TYPE|TYPE|ARRAY|AT|WITH|TASK|ON|OF)\\b)",
+					"name": "keyword.Autoblocks"
+				},
+				{
+					"match": "(\\b(?i)(USINT|UDINT|ULINT|UINT|LINT|DINT|SINT|INT|LREAL|REAL|TIME_OF_DAY|DATE_AND_TIME|TIME|DATE|WSTRING|STRING|LWORD|DWORD|WORD|BOOL|BYTE|TON|TOFF|TOD|DT|BINARY|HEX)\\b)",
+					"name": "storage.type.Autoblocks"
+				},
+				{
+					"match": "(?i)(READ_ONLY|READ_WRITE)",
+					"name": "storage.modifier.Autoblocks"
+				},
+				{
+					"match": "(\\b(?i)(RETURN|IF|THEN|ELSIF|ELSE|END_IF|CASE|END_CASE|END_FOR|5FOR|TO|BY|DO|WHILE|END_WHILE|REPEAT|UNTIL|END_REPEAT|EXIT)\\b)",
+					"name": "keyword.ST.Autoblocks"
+				},
+				{
+					"match": "(\\b(?i)(ADD|SUB|MUL|DIV|MOD|GT|GE|EQ|NE|LE|LT|JMPC|JMP|CALCN|CALC|CAL|RETCN|RETC|RET|ANDN|AND|ORN|XORN|STN|CAL|LDN|LD|STN|ST|S|R|NOT|MOD|AND|XOR|OR|SQRT)\\b)",
+					"name": "keyword.IL.Autoblocks"
+				},
+				{
+					"match": "(\\b(?i)(END_TRANSITION|TRANSITION|END_ACTION|ACTION|END_STEP|STEP|FROM|TO)\\b)",
+					"name": "keyword.SFC.Autoblocks"
+				}
+			]
+		},
+		"constants": {
+			"patterns": [
+				{
+					"match": "(((?i)(T|TIME)#([0-9][0-9])(:([0-9][0-9]))+)|((?i)(T|TIME)#-?([0-9]*[0-9]+d)?(_?[0-9]*[0-9]+h)?(_?([0-9]*[0-9]+m)(?!s))?(_?[0-9]*[0-9]+s)?(_?[0-9]*[0-9]+ms)?))",
+					"name": "constant.numeric.duration.Autoblocks"
+				},
+				{
+					"match": "((?i)(DT|DATE_AND_TIME)#[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]:[0-9][0-9](:([0-9][0-9]))?(.([0-9][0-9]))?)",
+					"name": "constant.numeric.dateTime.Autoblocks"
+				},
+				{
+					"match": "((?i)(T|TIME)#[0-9][0-9]:[0-9][0-9](:([0-9][0-9]))?(.([0-9][0-9]))?)",
+					"name": "constant.numeric.time.Autoblocks"
+				},
+				{
+					"match": "((16|8|2)#[0-9A-F]+)",
+					"name": "constant.numeric.base.Autoblocks"
+				},
+				{
+					"match": "([-]?[0-9]*\\.?[0-9]+(E-?[0-9]+)?)",
+					"name": "constant.numeric.Autoblocks"
+				},
+				{
+					"match": "\\b(?i)(?:TRUE|FALSE)\\b",
+					"name": "constant.language.Autoblocks"
+				}
+			]
+		},
+		"identifiers": {
+			"patterns": [
+				{
+					"match": "(%(?i)(I|Q|M)(?i)(X|B|W|D|L|\\*)([0-9]*[0-9])(\\.([0-9]*[0-9]))*)",
+					"name": "variable.other.Autoblocks"
+				},
+				{
+					"match": "(_[A-Za-z][A-Za-z0-9]*)|([A-Za-z][A-Za-z0-9_]*)",
+					"name": "variable.other.Autoblocks"
+				}
+			]
+		},
+		"punctuation": {
+			"patterns": [
+				{
+					"match": "(;)",
+					"name": "punctuation.terminator.Autoblocks"
+				},
+				{
+					"match": "(,)",
+					"name": "punctuation.separator.Autoblocks"
+				},
+				{
+					"match": "(\\.)",
+					"name": "punctuation.accessor.Autoblocks"
+				},
+				{
+					"match": "(:=>|:=|<=|>=|\\.\\.|:|\\(|\\)|\\*\\*|\\*|\\/|\\+|-|<|>|=|<>|&|,|\\[|\\]|#|%)",
+					"name": "punctuation.Autoblocks"
+				}
+			]
+		},
+		"illegal": {
+			"patterns": [
+				{
+					"match": "([^\\s])",
+					"name": "invalid.Autoblocks"
+				}
+			]
+		}
+	}
+}

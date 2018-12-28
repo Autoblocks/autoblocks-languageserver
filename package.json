@@ -21,6 +21,23 @@
 	],
 	"main": "./client/out/extension",
 	"contributes": {
+		"languages": [{
+            "id": "autoblocks",
+            "aliases": ["Autoblocks"],
+            "extensions": [".ab"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "autoblocks",
+            "scopeName": "source.autoblocks",
+            "path": "./syntaxes/Autoblocks.tmLanguage.json"
+		}],
+		"snippets": [
+			{
+				"language": "autoblocks",
+				"path": "./snippets.json"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",

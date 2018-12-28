@@ -1,0 +1,317 @@
+'t3tg35gt'
+Why :
+2#010001 4567 
+'1E+3'
+(* Hey *) 'wervvt'
+'wrvwrtvw'
+;
+READ_WRITE
+READ_ONLY
+WHAT
+ergb35yb4yb
+ANY
+TRUE FALSE
+FALSE TRUE
+CONFIGURATION TRANSITION MotorCon                                          
+    VAR_GLOBAL Trigger AT %IX2.3 : BOOL; END_VAR 
+    VAR_ACCESS
+        LineEmpty : CPU_LINE.%IX1.0 : BOOL READ_ONLY;
+    END_VAR
+    RESOURCE Res_1 ON CPU001
+        TASK T_1 (INTERVAL := t#80ms, PRIORITY := 4);
+        PROGRAM MotR WITH T_1 : MotorControl (MaxRPM := 12000); 
+    END_RESOURCE
+    RESOURCE Res_2 ON CPU002
+        TASK T_2 (SINGLE := Trigger, PRIORITY := 1);
+        PROGRAM MotP WITH T_2 : MotorProg (...); 
+    END_RESOURCE
+    VAR_ACCESS
+        RegP : CPU_Conveyor.Motion.RegPar : WORD READ_WRITE; 
+        CONV_EMPTY: CPU_Hammer.%IX1.0 : BOOL READ_ONLY;
+    END_VAR
+    VAR_CONFIG 
+        CPU_Conveyor.Motion.RegPar.C2 AT QB17: BYTE;
+    END_VAR
+END_CONFIGURATION
+
+TYPE COLOURS :
+    ( lRed, lYellow, lGreen,      (* light *)
+    Red, Yellow, Green,         (* normal *)
+    dRed, dYellow, dGreen);     (* dark *)
+END_TYPE
+
+TYPE CTUD : (* data structure of an FB instance of FB type CTUD *)
+    STRUCT
+    (* inputs *) 
+    CU : BOOL; (* count up *)
+    CD : BOOL; (* count down *)
+    R : BOOL; (* reset *)
+    LD : BOOL; (* load *)
+    PV : INT; (* preset value *)
+    (* outputs *) 
+    QU: BOOL; (* output up *)
+    QD: BOOL; (* output down *) 
+    CV: INT; (* current value *)
+    END_STRUCT; 
+END_TYPE
+
+(* Generic PROGRAM *)
+PROGRAM ProgFrameFUN                            (* common declaration part for std. FUNs *)
+    VAR                                         (* local data *)
+        RPM : REAL:= 10.5E-3;                      (* revs *)
+        RPM1 : REAL;                            (* revs 1 *)
+        RPM2 : REAL := 46.8895504;              (* revs 2 *)
+        Level : UINT:=1;                        (* revs level *)
+        Status : BYTE := 2#10101111;            (* status *)
+        Result : BYTE;                          (* intermediate result *)
+        Mask : BYTE := 2#11110000;              (* bit mask *)
+        PLCstand : STRING [11]:= 'IEC 61131-5'; (* character string *)
+        AT %IB2 : SINT;                         (* for MUX selection *)
+        AT %QX3.0 : BOOL;                       (* output bit *)
+        DateTime : DT := dt#1994-12-23-01:02:03;(* date and time *)
+        VTime : TIME := t#04h57m57s;            (* time *)
+        TraffLight : COLOURS;                   (* traffic light *)
+        ColScale1 : COLOURS:= lYellow;          (* scale of colours 1 *)
+        ColScale2 : COLOURS:= Yellow;           (* scale of colours 2 *)
+        ColScale3 : COLOURS:= dYellow;          (* scale of colours 3 *)
+        Scale : INT := 2;                       (* selection scale of colours *)
+    END_VAR
+
+    (* Local variable *)
+    VAR VarLocal : BOOL; END_VAR                        (* local Boolean variable *)
+    (* Calling interface: input parameters *)
+    VAR_INPUT VarIn : REAL; END_VAR                     (* input variable *)
+    VAR_IN_OUT VarInOut : UINT; END_VAR                 (* input and output variable *)
+    (* Return values: output parameters *)
+    VAR_OUTPUT VarOut : INT; END_VAR                    (* output variable *)      
+    (* Global interface: global/external variables and access paths *)
+    VAR_EXTERNAL VarGlob : WORD; END_VAR                (* external from other POU *)
+    VAR_GLOBAL VarGlob : WORD; END_VAR                  (* global for other POUs *)
+    VAR_ACCESS VarPath : WORD; END_VAR                  (* access path of configuration *)
+  
+    (* program body with examples *)
+END_PROGRAM    
+FUNCTION_BLOCK FbType 
+    VAR_INPUT
+        VarIn: INT, VarH: INT := 1; 
+    END_VAR
+    VAR_OUTPUT 
+        VarOut: INT := 5; 
+    END_VAR
+    IF (VarIn > VarH) THEN
+        VarOut := 10;
+    END_IF; 
+END_FUNCTION_BLOCK
+
+(* ST Function Block *)
+FUNCTION_BLOCK Volume 
+    VAR_INPUT
+        BalControl: SINT (-5..5);   (* balance control with integer range -5 to 5 *) 
+        VolControl: SINT (0..10);   (* control variable for the right amplifier *)
+        ModelType: BOOL;            (* return value *)
+    END_VAR 
+    VAR_OUTPUT
+        RightAmplif: REAL; 
+        LeftAmplif: REAL; 
+        LED: BOOL;                  (* Warning LED on 1; off:FALSE *)
+    END_VAR 
+    VAR_IN_OUT
+        Critical: BOOL;             (* return value *)
+    END_VAR
+    VAR 
+        MaxValue: REAL := 26.0;     (* max. amplifier input; active for a defined time: *)
+    END_VAR
+
+    HeatTime: TON; (* standard FB (time delay) to control *)
+    (* the overdrive time *)
+    Overdrive: BOOL; (* overdrive status *)
+
+    (* Control of the right amplifier depending on the volume and balance control settings *) 
+    RightAmplif := Norm ( LCtrlK := VolControl,
+    BlK := BalControl+5, MType := ModelType);
+    (*Control of the left amplifier, balance control knob behaves in reverse to that of the right amplifier*)
+    LeftAmplif := Norm ( LCtrlK := VolControl,
+    BlK := ABS(BalControl - 5), MType := ModelType);
+    (* Overdrive ? *)
+    IF MAX(LeftAmplif, RightAmplif) >= MaxValue THEN
+    Overdrive := TRUE; ELSE
+    Overdrive := FALSE; END_IF;
+    (* Overdrive for more than 2 seconds? *) HeatTime (IN := Overdrive, PT := T#2s);
+    LED := HeatTime.Q;
+    IF HeatTime.Q = TRUE THEN
+    Critical := 1; END_IF;
+
+    FbName();                           (* FbName.VarOut == 5 *)
+    FbName(VarIn := 3, VarOut=>Res);    (* Alternative call: FbName(3, 1, Res *); (* FbName.VarOut == 10, copied to RES *)
+
+    (* if variable x less than y, exit POU *) 
+    IF x < y THEN 
+        RETURN;
+    END_IF;
+
+    IF Condition1 THEN
+        Statements1;     (* Execute Statements1, if Condition1 is TRUE, continue after “ End_of_IF”; otherwise: *)
+    ELSIF Condition2 THEN
+        Statements2;    (* Execute Statements2, if Condition2 is TRUE, continue after “ End_of_IF”; otherwise: *)
+    ELSE Statements;    (* Execute Statements if no previous condition evaluates to TRUE *)
+    END_IF;
+
+    CASE VarInteger OF 
+        1: Statements1;         (* Execute Statements1, if VarInteger is TRUE, continue after “ End_of_CASE”; otherwise: *)
+        2,3: Statements2;       (* Execute Statements2, if VarInteger is 2 or 3, continue after “ End_of_CASE”; otherwise: *) 
+        10..20: Statements3;    (* Execute Statements3, if VarInteger is between 10 and 20, continue after “End_of_CASE”; otherwise: *)
+    ELSE Statements;            (* Execute Statements if no comparison succeeded *)
+    END_CASE;
+    (* End_of_CASE *)
+    
+END_FUNCTION_BLOCK
+
+(* ST Function *)
+FUNCTION Norm: REAL 
+    VAR_INPUT 
+        BlK: SINT; (* scaled balance control *) 
+        LCtrlK: SINT; (* volume control *) 
+        MType: BOOL; (* 2 types; described by TRUE or FALSE *)
+    END_VAR 
+    TYPE
+        CalType : REAL := 5.0; (* data type with special initial value *) 
+    END_TYPE
+    VAR
+        Calib: CalType; (*Scaling value for amplifier output; initialised with 5.0 *)
+    END_VAR
+
+    VAR 
+        TestField: ARRAY [1..5] OF INT := [2, 16, 4, 7, 32]; 
+        Index: INT := 1; 
+        IndexMax: INT := 5; 
+        Maximum: INT := 0;
+    END_VAR
+
+    WHILE Index <= IndexMax DO
+        IF TestField[Index] > Maximum THEN 
+            Maximum := TestField[Index];
+        END_IF;
+        Index := Index + 1;
+    END_WHILE;
+
+    REPEAT
+        IF TestField[Index] > Maximum THEN 
+            Maximum := TestField[Index];
+        END_IF;
+        Index := Index + 1;
+    UNTIL Index > IndexMax END_REPEAT;
+
+    FOR Index := 1 TO IndexMax BY 1 DO
+        IF TestField[Index] > Maximum THEN 
+            Maximum := TestField[Index];
+            EXIT;
+        END_IF;
+    END_FOR;
+
+    (* Evaluate real numbers for the amplifiers depending on model and control knob settings *) 
+    Norm := SINT_TO_REAL(BlK) + (* take the balance value *)
+            Calib + (* add scaling value *)
+            SEL(G := MType, IN0 := 4.0, IN1 := 6.0) + (* model-specific scaling value *) 
+            SINT_TO_REAL(LCtrlK); (* add the volume value *)
+END_FUNCTION
+
+(* IL Program *)
+TYPE
+    Colour : (red, yellow, green);      (* enumeration *)
+    Sensor : INT (-56..128);            (* range *)
+    Measure : ARRAY [1..45] OF Sensor;  (* array *)
+    TestBench :                         (* structure *)
+    STRUCT 
+        Place : UINT;                   (* elementary data type *)
+        Light : Colour:= red;           (* enumerated data type with initial value *)
+        Meas1 : Measure;                (* array type *)
+        Meas2 : Measure;                (* array type *)
+        Meas3 : Measure;                (* array type *)
+    END_STRUCT; 
+END_TYPE
+
+PROGRAM MotorControl
+    (* In the case of data type STRING an initial character string may be specified in single quotation marks. *)
+    VAR
+        Field1 : ARRAY [1..12] OF SINT := [3,16#FF,-5,-9,-5,-9,-5,-9,-5,-9,0,0]; 
+        Field2 : ARRAY [1..12] OF SINT := [3,16#FF, 4(-5,-9), 2(0)];
+        Text : STRING [4] := 'stop';
+    END_VAR
+    
+    VAR
+        FirstOperand, SecondOperand, Result: INT := 10; 
+        StringOp: String[30] := '12345678901234567890'; 
+        StringRes: String[25];
+    END_VAR
+
+    VAR_OUTPUT RETAIN 
+        EndSignal: BOOL;
+    END_VAR
+
+    LD t#20:12
+    Fctn %IW4, VarGlob                                          (* function call *) 
+    CAL FunBlk (Par1 := t#20:12, Par2 := %IW4, Par3 := VarGlob) (* FB call *)
+
+    B1: LD FirstOperand (* 10 {INT} *)
+    ADD SecondOperand   (* 20 {INT} *)
+    ST Result           (* 20 {INT} *)
+    GT 0                (* TRUE, because 20 > 0 {BOOL} *)
+    JMPC B2             
+    (* jump, because CR=TRUE; present value of CR remains {BOOL} *) 
+    JMP FarAway (* CR is not defined or present value: *)
+    (* implementation-dependent *)
+    B2: LD StringOp (* 12345678901234567890 {STRING} *)
+    ST StringRes (* 12345678901234567890 {STRING} *) (* .. *)
+    
+    FarAway: (* ... *)
+    
+    LD 1            (*1*)
+    ADD( 2          (*2*)
+        ADD( 3      (*3*)    
+            ADD     (*7*)
+        )           (*9*)
+    )               (*10*)
+    ST Var1         (*10*)
+    
+    LIMIT(
+        EN:= ErrorCond,
+        MN :=1,
+        IN :=2,
+        MX := 3,
+        ENO => ErrorCondLim     (* => indicates: ENO is output parameter *)
+        )  
+
+END_PROGRAM
+
+(* LD Program *)
+
+(* FBD Program *)
+
+(* SFC Program *)
+
+TRANSITION FROM step_V TO step_A 
+    := TransCondX; 
+END_TRANSITION
+TRANSITION FROM step_A TO step_N 
+    := BA OR NOT CT; 
+END_TRANSITION
+STEP step_A: InstrucPart(N, CT);
+    BoolAction(D, t#1s, BA); 
+END_STEP
+ACTION InstrucPart :
+    IF (step_A.X AND Error_Test()) = TRUE THEN
+    ELSE
+END_ACTION
+CT := TRUE; 
+CT := FALSE;
+ACTION BoolAction : 
+    BA := TRUE;
+END_ACTION
+
+ACTION dwfeff:
+FG := 'rrtvrv';
+END_VAR
+
+
+
+
