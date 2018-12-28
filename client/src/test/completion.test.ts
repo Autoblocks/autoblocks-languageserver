@@ -9,7 +9,7 @@ import * as assert from 'assert';
 import { getDocUri, activate } from './helper';
 
 describe('Should do completion', () => {
-	const docUri = getDocUri('completion.txt');
+	const docUri = getDocUri('completion.ab');
 
 	it('Completes JS/TS in txt file', async () => {
 		await testCompletion(docUri, new vscode.Position(0, 0), {

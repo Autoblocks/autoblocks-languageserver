@@ -16,7 +16,7 @@ const vscode = require("vscode");
 const assert = require("assert");
 const helper_1 = require("./helper");
 describe('Should do completion', () => {
-    const docUri = helper_1.getDocUri('completion.txt');
+    const docUri = helper_1.getDocUri('completion.ab');
     it('Completes JS/TS in txt file', () => __awaiter(this, void 0, void 0, function* () {
         yield testCompletion(docUri, new vscode.Position(0, 0), {
             items: [

@@ -16,7 +16,7 @@ const vscode = require("vscode");
 const assert = require("assert");
 const helper_1 = require("./helper");
 describe('Should get diagnostics', () => {
-    const docUri = helper_1.getDocUri('diagnostics.txt');
+    const docUri = helper_1.getDocUri('diagnostics.ab');
     it('Diagnoses uppercase texts', () => __awaiter(this, void 0, void 0, function* () {
         yield testDiagnostics(docUri, [
             { message: 'ANY is all uppercase.', range: toRange(0, 0, 0, 3), severity: vscode.DiagnosticSeverity.Warning, source: 'ex' },

@@ -20,7 +20,7 @@ const path = require("path");
 function activate(docUri) {
     return __awaiter(this, void 0, void 0, function* () {
         // The extensionId is `publisher.name` from package.json
-        const ext = vscode.extensions.getExtension('vscode.lsp-sample');
+        const ext = vscode.extensions.getExtension('Autoblocks.autoblocks-lsp');
         yield ext.activate();
         try {
             exports.doc = yield vscode.workspace.openTextDocument(docUri);
